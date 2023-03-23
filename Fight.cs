@@ -125,7 +125,6 @@ namespace SpireAssault
 				}
 			}
 			ModifyConditions(attacker, defender);
-
 			return FightResult.None;
 		}
 
