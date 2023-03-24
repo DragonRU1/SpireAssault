@@ -153,6 +153,7 @@ namespace SpireAssault
 			Trimp.CurrentStats.ShockMult = Trimp.BaseStats.ShockMult;
 			Trimp.CurrentStats.Defense = Trimp.BaseStats.Defense;
 			Trimp.CurrentStats.Lifesteal = Trimp.BaseStats.Lifesteal;
+			Trimp.CurrentStats.MaxHP = Trimp.BaseStats.MaxHP;
 
 			if (Trimp.Equipment.RustyDagger > 0)
 				if (Enemy.CurrentStats.ShockedTime > 0 || Enemy.CurrentStats.PoisonedTime > 0)
