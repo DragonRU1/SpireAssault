@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpireAssault
 {
-	internal class Fighter
+	internal abstract class Fighter
 	{
 		public Stats BaseStats { get; set; }
 		public Stats CurrentStats { get; set; }
@@ -15,6 +15,8 @@ namespace SpireAssault
 
 		public Fighter()
 		{
+			BaseStats = new Stats();
+			CurrentStats = new Stats();
 
 		}
 		public Fighter Copy()

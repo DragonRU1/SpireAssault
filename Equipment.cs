@@ -9,13 +9,13 @@ namespace SpireAssault
 	public enum EqNames
 	{
 		MenacingMask = 0,
-		RustyDagger = 1,
-		FistsOfGoo = 2,
-		BatteryStick = 3,
-		Pants = 4,
-		Sword = 5,
-		Armor = 6,
-		RainCoat = 7
+		Sword = 1,
+		Armor = 2,
+		RustyDagger = 3,
+		FistsOfGoo = 4,
+		BatteryStick = 5,
+		Pants = 6,
+		Raincoat = 7
 	}
 
 
@@ -24,13 +24,13 @@ namespace SpireAssault
 		int[] Items;
 
 		public int MenacingMask => Items[(int)EqNames.MenacingMask];
+		public int Sword => Items[(int)EqNames.Sword];
+		public int Armor => Items[(int)EqNames.Armor];
 		public int RustyDagger => Items[(int)EqNames.RustyDagger];
 		public int FistsOfGoo => Items[(int)EqNames.FistsOfGoo];
 		public int BatteryStick => Items[(int)EqNames.BatteryStick];
 		public int Pants => Items[(int)EqNames.Pants];
-		public int Sword => Items[(int)EqNames.Sword];
-		public int Armor => Items[(int)EqNames.Armor];
-		public int RainCoat => Items[(int)EqNames.RainCoat];
+		public int RainCoat => Items[(int)EqNames.Raincoat];
 
 		public Equipment(int[] items)
 		{

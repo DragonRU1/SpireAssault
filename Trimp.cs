@@ -16,10 +16,10 @@ namespace SpireAssault
 			CalcualteBaseStats();
 		}
 
-		public Trimp Copy()
+		public new Trimp Copy()
 		{
-			Trimp s = new Trimp(Equipment.Copy());
-			s.BaseStats = BaseStats.Copy();
+			Trimp s = (Trimp)base.Copy();
+			s.Equipment = Equipment.Copy();
 			return s;
 		}
 

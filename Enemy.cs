@@ -48,7 +48,7 @@ namespace SpireAssault
 				BaseStats.AttackSpeed *= 1.05 * Math.Pow(1.02, eq.MenacingMask-1);
 
 			if (Level == 2)
-				BaseStats.Attack *= 16/15;
+				BaseStats.Attack *= 16.0/15;
 
 		}
 

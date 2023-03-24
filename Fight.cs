@@ -20,7 +20,6 @@ namespace SpireAssault
 		int poisonTick;
 		Random rand;
 
-
 		public Fight(Simulation sim)
 		{
 			Trimp=sim.Trimp;
@@ -75,7 +74,6 @@ namespace SpireAssault
 				Enemy.CurrentStats.BleedingTime -= Tick;
 				Enemy.CurrentStats.PoisonedTime -= Tick;
 				Enemy.CurrentStats.ShockedTime -= Tick;
-
 			}
 		}
 
@@ -173,11 +171,18 @@ namespace SpireAssault
 				}
 			}
 
-			if (rand.NextDouble() * 100 < attacker.CurrentStats.ShockResist - defender.CurrentStats.ShockResist)
+			if (rand.NextDouble() * 100 < attacker.CurrentStats.ShockChance - defender.CurrentStats.ShockResist)
 			{
 				defender.CurrentStats.ShockedTime = attacker.CurrentStats.ShockTimeMax;
 				defender.CurrentStats.ShockedMult = attacker.CurrentStats.ShockMult;
 			}
+
+			if (rand.NextDouble() * 100 < attacker.CurrentStats.PoisonChance - defender.CurrentStats.PoisonResist)
+			{
+				defender.CurrentStats.PoisonedTime = attacker.CurrentStats.PoisonTimeMax;
+				defender.CurrentStats.PoisonedStacks = Math.Max(defender.CurrentStats.PoisonedStacks+1, attacker.CurrentStats.PoisonMaxStacks);
+			}
+
 
 		}
 
