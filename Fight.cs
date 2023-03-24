@@ -81,13 +81,13 @@ namespace SpireAssault
 		{
 			{
 				// Process direct damage
-				double dmg = Math.Max(attacker.CurrentStats.Attack
+				double dmg = attacker.CurrentStats.Attack
 					* (defender.CurrentStats.ShockedTime > 0 ? 1+defender.CurrentStats.ShockedMult : 1)
-					* (1+0.002*(rand.Next(201)-100)) - defender.CurrentStats.Defense, 0);
+					* (1+0.002*(rand.Next(201)-100));
 				if (!attacker.isTrimp)
 				{
-					double enrageTimer = (60 - attacker.Enraging*10) * 1000;
-					double enrageMult = 1 + (((Enemy)attacker).Level > 29 ? 0.5 : 0.25) + attacker.Enraging*0.1;
+					double enrageTimer = (60 - ((Enemy)attacker).Enraging*10) * 1000;
+					double enrageMult = 1 + (((Enemy)attacker).Level > 29 ? 0.5 : 0.25) + ((Enemy)attacker).Enraging*0.1;
 					dmg *= Math.Pow(enrageMult, Math.Floor(FightTime / enrageTimer));
 				}
 
@@ -99,8 +99,8 @@ namespace SpireAssault
 				if (attacker.CurrentStats.Lifesteal > 0)
 				{
 					attacker.CurrentStats.HP += FullDamage * (attacker.CurrentStats.Lifesteal - defender.CurrentStats.LifestealResist);
-					if (attacker.CurrentStats.HP > attacker.BaseStats.HP)
-						attacker.CurrentStats.HP = attacker.BaseStats.HP;
+					if (attacker.CurrentStats.HP > attacker.CurrentStats.MaxHP)
+						attacker.CurrentStats.HP = attacker.CurrentStats.MaxHP;
 				}
 			}
 
@@ -108,7 +108,7 @@ namespace SpireAssault
 			if (attacker.CurrentStats.BleedingTime > 0)
 			{
 				double dmg = Math.Max(defender.CurrentStats.Attack 
-					* (1 + defender.CurrentStats.BleedMult/100) 
+					* (1 + defender.CurrentStats.BleedMult) 
 					* (attacker.CurrentStats.ShockedTime > 0 ? 1+attacker.CurrentStats.ShockedMult : 1)
 					- attacker.CurrentStats.Defense, 0);
 				attacker.CurrentStats.HP -= dmg;
@@ -118,8 +118,8 @@ namespace SpireAssault
 				if (defender.CurrentStats.Lifesteal > 0)
 				{
 					defender.CurrentStats.HP += dmg * (defender.CurrentStats.Lifesteal - attacker.CurrentStats.LifestealResist);
-					if (defender.CurrentStats.HP > defender.BaseStats.HP)
-						defender.CurrentStats.HP = defender.BaseStats.HP;
+					if (defender.CurrentStats.HP > defender.CurrentStats.MaxHP)
+						defender.CurrentStats.HP = defender.CurrentStats.MaxHP;
 				}
 			}
 			ModifyConditions(attacker, defender);
@@ -130,8 +130,9 @@ namespace SpireAssault
 		{
 			if (attacker.CurrentStats.PoisonedTime > 0)
 			{
-				attacker.CurrentStats.HP -= defender.CurrentStats.PoisonDamage*defender.CurrentStats.PoisonedStacks * 
-					attacker.CurrentStats.ShockedTime > 0 ? 1+attacker.CurrentStats.ShockedMult : 0;
+				attacker.CurrentStats.HP -= defender.CurrentStats.PoisonDamage
+					* attacker.CurrentStats.PoisonedStacks 
+					* (attacker.CurrentStats.ShockedTime > 0 ? 1+attacker.CurrentStats.ShockedMult : 1);
 				if (attacker.CurrentStats.HP <= 0)
 				{
 					if (attacker.isTrimp)
@@ -146,8 +147,12 @@ namespace SpireAssault
 		void RecalculateStats()
 		{
 			Trimp.CurrentStats.BleedChance = Trimp.BaseStats.BleedChance;
+			Trimp.CurrentStats.BleedMult = Trimp.BaseStats.BleedMult;
 			Trimp.CurrentStats.PoisonChance = Trimp.BaseStats.PoisonChance;
 			Trimp.CurrentStats.ShockChance = Trimp.BaseStats.ShockChance;
+			Trimp.CurrentStats.ShockMult = Trimp.BaseStats.ShockMult;
+			Trimp.CurrentStats.Defense = Trimp.BaseStats.Defense;
+			Trimp.CurrentStats.Lifesteal = Trimp.BaseStats.Lifesteal;
 
 			if (Trimp.Equipment.RustyDagger > 0)
 				if (Enemy.CurrentStats.ShockedTime > 0 || Enemy.CurrentStats.PoisonedTime > 0)
@@ -158,6 +163,18 @@ namespace SpireAssault
 			if (Trimp.Equipment.BatteryStick > 0)
 				if (Enemy.CurrentStats.PoisonedTime > 0 || Enemy.CurrentStats.BleedingTime > 0)
 					Trimp.CurrentStats.PoisonChance += 35;
+			if ((Trimp.Equipment.RainCoat > 0) && (Trimp.CurrentStats.BleedChance > Enemy.CurrentStats.BleedResist))
+			{
+				Trimp.CurrentStats.Defense += 4 + Trimp.Equipment.RainCoat * 2;
+				Trimp.CurrentStats.MaxHP += 20 + Trimp.Equipment.RainCoat * 20;
+
+				// if you have bleed chance on start, your current hp is also increased
+				if (FightTime == Tick)
+					Trimp.CurrentStats.HP = Trimp.CurrentStats.MaxHP;
+
+				Trimp.CurrentStats.Lifesteal += 0.125 + 0.025*Trimp.Equipment.RainCoat;
+				Trimp.CurrentStats.BleedMult += 0.2 + 0.1*Trimp.Equipment.RainCoat;
+			}
 		}
 
 		void ModifyConditions(Fighter attacker, Fighter defender)
@@ -180,7 +197,7 @@ namespace SpireAssault
 			if (rand.NextDouble() * 100 < attacker.CurrentStats.PoisonChance - defender.CurrentStats.PoisonResist)
 			{
 				defender.CurrentStats.PoisonedTime = attacker.CurrentStats.PoisonTimeMax;
-				defender.CurrentStats.PoisonedStacks = Math.Max(defender.CurrentStats.PoisonedStacks+1, attacker.CurrentStats.PoisonMaxStacks);
+				defender.CurrentStats.PoisonedStacks = Math.Min(defender.CurrentStats.PoisonedStacks+1, attacker.CurrentStats.PoisonMaxStacks);
 			}
 
 

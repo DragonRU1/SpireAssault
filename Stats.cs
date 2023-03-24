@@ -9,6 +9,7 @@ namespace SpireAssault
 	internal class Stats
 	{
 		public double HP;
+		public double MaxHP;
 		public double Attack;
 		public double AttackSpeed;
 		public double Defense;
@@ -19,25 +20,25 @@ namespace SpireAssault
 		public double ShockMult;
 		public double PoisonDamage;
 		public int PoisonMaxStacks;
-		public double Lifesteal;
 
-		public int BleedTimeMax;
-		public int ShockTimeMax;
-		public int PoisonTimeMax;
+		public double BleedTimeMax;
+		public double ShockTimeMax;
+		public double PoisonTimeMax;
 
 		public double BleedResist;
 		public double ShockResist;
 		public double PoisonResist;
+
+		// Lifesteal is calcualted in decimals, not %, so I use 0.1 instead 10%
+		public double Lifesteal;
 		public double LifestealResist;
 
-		public int BleedingTime;
-		public int ShockedTime;
-		public int PoisonedTime;
+		public double BleedingTime;
+		public double ShockedTime;
+		public double PoisonedTime;
 		public double BleedingMult;
 		public double ShockedMult;
 		public int PoisonedStacks;
-
-		public int Enraging;
 
 		public Stats()
 		{

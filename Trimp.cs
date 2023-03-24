@@ -32,6 +32,7 @@ namespace SpireAssault
 			BaseStats.Defense = 0;
 			BaseStats.Attack = 5;
 			BaseStats.AttackSpeed = 5000;
+			BaseStats.PoisonMaxStacks = 2;
 			if (Equipment.MenacingMask > 0)
 			{
 				BaseStats.AttackSpeed *= Math.Pow(0.98, Equipment.MenacingMask);
@@ -43,7 +44,7 @@ namespace SpireAssault
 				int lv5 = (int)Math.Floor(Equipment.RustyDagger / 5.0);
 				BaseStats.Attack += 10 * lv5;
 				BaseStats.BleedChance += 17 + 3*Equipment.RustyDagger;
-				BaseStats.BleedMult += 10 + 5*Equipment.RustyDagger + 20*lv5;
+				BaseStats.BleedMult += 0.1 + 0.05*Equipment.RustyDagger + 0.2*lv5;
 			}
 			if (Equipment.FistsOfGoo > 0)
 			{
@@ -53,9 +54,12 @@ namespace SpireAssault
 			if (Equipment.BatteryStick > 0)
 			{
 				BaseStats.ShockChance += 35;
-				BaseStats.ShockMult += 15 + Equipment.BatteryStick * 10;
+				BaseStats.ShockMult += 0.15 + Equipment.BatteryStick * 0.1;
 			}	
 			BaseStats.Defense += Equipment.Pants;
+
+			// After all equipment
+			BaseStats.MaxHP = BaseStats.HP;
 		}
 	}
 

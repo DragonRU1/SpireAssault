@@ -42,5 +42,10 @@ namespace SpireAssault
 			return (Equipment)MemberwiseClone();
 		}
 
+		public Equipment(EquipmentDS equipmentDS)
+		{
+			Items = equipmentDS.Items.Select(x => x.Level).ToArray();
+		}
+
 	}
 }

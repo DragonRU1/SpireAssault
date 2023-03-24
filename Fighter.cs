@@ -11,7 +11,6 @@ namespace SpireAssault
 		public Stats BaseStats { get; set; }
 		public Stats CurrentStats { get; set; }
 		public bool isTrimp { get; set; }
-		public int Enraging { get; set; }
 
 		public Fighter()
 		{
