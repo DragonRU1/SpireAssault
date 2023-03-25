@@ -167,7 +167,7 @@ namespace SpireAssault
 					Trimp.CurrentStats.PoisonChance += 25;
 			if (Trimp.Equipment.BatteryStick > 0)
 				if (Enemy.CurrentStats.PoisonedTime > 0 || Enemy.CurrentStats.BleedingTime > 0)
-					Trimp.CurrentStats.PoisonChance += 35;
+					Trimp.CurrentStats.ShockChance += 35;
 			if ((Trimp.Equipment.Raincoat > 0) && (Trimp.CurrentStats.BleedChance > Enemy.CurrentStats.BleedResist))
 			{
 				Trimp.CurrentStats.Defense += 4 + Trimp.Equipment.Raincoat * 2;
@@ -213,6 +213,8 @@ namespace SpireAssault
 			if (attacker.CurrentStats.CanPoison 
 				&& (rand.NextDouble() * 100 < attacker.CurrentStats.PoisonChance - defender.CurrentStats.PoisonResist))
 			{
+				if (defender.CurrentStats.PoisonedTime <= 0)
+					defender.CurrentStats.PoisonedStacks = 0;
 				defender.CurrentStats.PoisonedTime = attacker.CurrentStats.PoisonTimeMax;
 				defender.CurrentStats.PoisonedStacks = Math.Min(defender.CurrentStats.PoisonedStacks+1, attacker.CurrentStats.PoisonMaxStacks);
 			}
