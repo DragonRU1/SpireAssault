@@ -45,18 +45,45 @@ namespace SpireAssault
 				BaseStats.Attack += 10 * lv5;
 				BaseStats.BleedChance += 17 + 3*Equipment.RustyDagger;
 				BaseStats.BleedMult += 0.1 + 0.05*Equipment.RustyDagger + 0.2*lv5;
+				BaseStats.CanBleed = true;
 			}
 			if (Equipment.FistsOfGoo > 0)
 			{
 				BaseStats.PoisonChance += 25;
 				BaseStats.PoisonDamage += Equipment.FistsOfGoo;
+				BaseStats.CanPoison = true;
 			}
 			if (Equipment.BatteryStick > 0)
 			{
 				BaseStats.ShockChance += 35;
 				BaseStats.ShockMult += 0.15 + Equipment.BatteryStick * 0.1;
+				BaseStats.CanShock = true;
 			}	
 			BaseStats.Defense += Equipment.Pants;
+			if (Equipment.PutridPouch > 0)
+			{
+				BaseStats.PoisonTimeMax = Math.Max(BaseStats.PoisonTimeMax, 19000 + Equipment.PutridPouch * 1000);
+				BaseStats.PoisonChance += 14 + Equipment.PutridPouch * 6;
+				BaseStats.Defense += 7 + Equipment.PutridPouch * 3;
+			}
+			if (Equipment.ChemistrySet > 0)
+			{
+				BaseStats.PoisonChance += 6 + Equipment.ChemistrySet*4;
+				BaseStats.PoisonMaxStacks += 1 + (int)Math.Floor(Equipment.ChemistrySet/4.0);
+			}
+			if (Equipment.BadMedkit > 0)
+			{
+				BaseStats.BleedTimeMax = Math.Max(BaseStats.BleedTimeMax, 11000 + Equipment.BadMedkit * 1000);
+				BaseStats.BleedChance += 21 + Equipment.BadMedkit*4;
+				BaseStats.Lifesteal += 0.175 + 0.025*Equipment.BadMedkit;
+			}
+			if (Equipment.ComfyBoots > 0)
+			{
+				BaseStats.Defense += 2 + Equipment.ComfyBoots*2;
+				BaseStats.BleedResist += Equipment.ComfyBoots*5;
+				BaseStats.ShockResist += Equipment.ComfyBoots*5;
+				BaseStats.PoisonResist += Equipment.ComfyBoots*5;
+			}
 
 			// After all equipment
 			BaseStats.MaxHP = BaseStats.HP;

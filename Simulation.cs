@@ -12,11 +12,13 @@ namespace SpireAssault
 		public Fighter Enemy { get; set; }
 		public int Wins;
 		public int Losses;
+		public double Dust;
 		public long RunTime;
 		public Simulation(Trimp trimp, Fighter enemy) 
 		{ 
 			Wins = 0;
 			Losses = 0;
+			Dust = 0;
 			Trimp = trimp;
 			Enemy = enemy;
 			RunTime = 0;
@@ -32,8 +34,12 @@ namespace SpireAssault
 			for (int i = 0; i < Fights; i++)
 			{
 				Fight fight = new Fight(this);
-				if (fight.Simulate() == FightResult.Win)
+				double dust;
+				if (fight.Simulate(out dust) == FightResult.Win)
+				{
 					Wins++;
+					Dust += dust;
+				}
 				else
 					Losses++;
 				RunTime += fight.FightTime;

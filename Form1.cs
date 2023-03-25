@@ -23,10 +23,10 @@ namespace SpireAssault
 		{
 			Equipment.Columns[0].Visible = false;
 			Equipment.Columns[1].Visible = false;
-			Equipment.Columns[3].Width = 50;
-			Equipment.Columns[4].Width = 80;
+			Equipment.Columns[3].Width = 52;
+			Equipment.Columns[4].Width = 75;
 			Equipment.Columns[4].HeaderText = "Equipped";
-			Equipment.Columns[5].Width = 80;
+			Equipment.Columns[5].Width = 75;
 			Equipment.Columns[5].HeaderText = "Unlocked";
 		}
 
@@ -39,7 +39,9 @@ namespace SpireAssault
 			Enemy en = new(enemyLevel, eq);
 			Simulation s = new(t, en);
 			s.ProcessFights(100000);
-			Result.Text = $"Wins = {s.Wins}, {Environment.NewLine}Losses = {s.Losses}";
+			Result.Text = $"Wins = {s.Wins}, {Environment.NewLine}" +
+				$"Losses = {s.Losses}, {Environment.NewLine}" +
+				$"Dust per second = {s.Dust/s.RunTime * 1000}";
 		}
 
 		private void loadGame_Click(object sender, EventArgs e)
@@ -82,6 +84,12 @@ namespace SpireAssault
 		private void ProcessWrongSave()
 		{
 			MessageBox.Show("Incorrect save file. Please check your input.", "Incorrect save file", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+		}
+
+		private void reset_Click(object sender, EventArgs e)
+		{
+			equipmentDS = new();
+			Equipment.DataSource = equipmentDS.Items;
 		}
 	}
 }

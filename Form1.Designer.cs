@@ -37,6 +37,7 @@
 			this.Result = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.eLevel = new System.Windows.Forms.NumericUpDown();
+			this.reset = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.Equipment)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.eLevel)).BeginInit();
 			this.SuspendLayout();
@@ -61,7 +62,7 @@
 			this.Equipment.Name = "Equipment";
 			this.Equipment.RowHeadersVisible = false;
 			this.Equipment.RowTemplate.Height = 25;
-			this.Equipment.Size = new System.Drawing.Size(329, 426);
+			this.Equipment.Size = new System.Drawing.Size(329, 397);
 			this.Equipment.TabIndex = 1;
 			// 
 			// loadGame
@@ -129,11 +130,22 @@
             0,
             0});
 			// 
+			// reset
+			// 
+			this.reset.Location = new System.Drawing.Point(12, 415);
+			this.reset.Name = "reset";
+			this.reset.Size = new System.Drawing.Size(75, 23);
+			this.reset.TabIndex = 11;
+			this.reset.Text = "Reset";
+			this.reset.UseVisualStyleBackColor = true;
+			this.reset.Click += new System.EventHandler(this.reset_Click);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.Controls.Add(this.reset);
 			this.Controls.Add(this.eLevel);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.Result);
@@ -163,5 +175,6 @@
 		private TextBox Result;
 		private Label label3;
 		private NumericUpDown eLevel;
+		private Button reset;
 	}
 }

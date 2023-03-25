@@ -33,38 +33,41 @@ namespace SpireAssault
 			rand=new Random();
 		}
 
-		public FightResult Simulate()
+		public FightResult Simulate(out double dust)
 		{
+			dust = 0;
 			while (true)
 			{
 				FightTime += Tick;
 
 				RecalculateStats();
-
+				FightResult fr = FightResult.None;
 				if (attackT < Tick)
 				{
-					FightResult fr = ProcessAttack(Trimp, Enemy);
-					if (fr != FightResult.None) return fr;
+					fr = ProcessAttack(Trimp, Enemy);
 					attackT += Trimp.CurrentStats.AttackSpeed;
 				}
-				if (poisonTick < Tick)
+				if (poisonTick < Tick && fr == FightResult.None)
 				{
-					FightResult fr = ProcessPoison(Trimp, Enemy);
-					if (fr != FightResult.None) return fr;
+					fr = ProcessPoison(Trimp, Enemy);
 				}
-				if (attackE < Tick)
+				if (attackE < Tick && fr == FightResult.None)
 				{
-					FightResult fr = ProcessAttack(Enemy, Trimp);
-					if (fr != FightResult.None) 
-						return fr;
+					fr = ProcessAttack(Enemy, Trimp);
 					attackE += Enemy.CurrentStats.AttackSpeed;
 				}
-				if (poisonTick < Tick)
+				if (poisonTick < Tick && fr == FightResult.None)
 				{
-					FightResult fr = ProcessPoison(Enemy, Trimp);
-					if (fr != FightResult.None) return fr;
+					fr = ProcessPoison(Enemy, Trimp);
 					poisonTick += 1000;
 				}
+				if (fr != FightResult.None)
+				{
+					if (fr == FightResult.Win)
+						dust = ((Enemy)Enemy).Dust;
+					return fr;
+				}
+
 				attackT -= Tick;
 				attackE -= Tick;
 				poisonTick -= Tick;
@@ -98,7 +101,7 @@ namespace SpireAssault
 
 				if (attacker.CurrentStats.Lifesteal > 0)
 				{
-					attacker.CurrentStats.HP += FullDamage * (attacker.CurrentStats.Lifesteal - defender.CurrentStats.LifestealResist);
+					attacker.CurrentStats.HP += FullDamage * Math.Max(attacker.CurrentStats.Lifesteal - defender.CurrentStats.LifestealResist, 0);
 					if (attacker.CurrentStats.HP > attacker.CurrentStats.MaxHP)
 						attacker.CurrentStats.HP = attacker.CurrentStats.MaxHP;
 				}
@@ -154,6 +157,7 @@ namespace SpireAssault
 			Trimp.CurrentStats.Defense = Trimp.BaseStats.Defense;
 			Trimp.CurrentStats.Lifesteal = Trimp.BaseStats.Lifesteal;
 			Trimp.CurrentStats.MaxHP = Trimp.BaseStats.MaxHP;
+			Trimp.CurrentStats.AttackSpeed = Trimp.BaseStats.AttackSpeed;
 
 			if (Trimp.Equipment.RustyDagger > 0)
 				if (Enemy.CurrentStats.ShockedTime > 0 || Enemy.CurrentStats.PoisonedTime > 0)
@@ -164,17 +168,26 @@ namespace SpireAssault
 			if (Trimp.Equipment.BatteryStick > 0)
 				if (Enemy.CurrentStats.PoisonedTime > 0 || Enemy.CurrentStats.BleedingTime > 0)
 					Trimp.CurrentStats.PoisonChance += 35;
-			if ((Trimp.Equipment.RainCoat > 0) && (Trimp.CurrentStats.BleedChance > Enemy.CurrentStats.BleedResist))
+			if ((Trimp.Equipment.Raincoat > 0) && (Trimp.CurrentStats.BleedChance > Enemy.CurrentStats.BleedResist))
 			{
-				Trimp.CurrentStats.Defense += 4 + Trimp.Equipment.RainCoat * 2;
-				Trimp.CurrentStats.MaxHP += 20 + Trimp.Equipment.RainCoat * 20;
+				Trimp.CurrentStats.Defense += 4 + Trimp.Equipment.Raincoat * 2;
+				Trimp.CurrentStats.MaxHP += 20 + Trimp.Equipment.Raincoat * 20;
 
 				// if you have bleed chance on start, your current hp is also increased
 				if (FightTime == Tick)
 					Trimp.CurrentStats.HP = Trimp.CurrentStats.MaxHP;
 
-				Trimp.CurrentStats.Lifesteal += 0.125 + 0.025*Trimp.Equipment.RainCoat;
-				Trimp.CurrentStats.BleedMult += 0.2 + 0.1*Trimp.Equipment.RainCoat;
+				Trimp.CurrentStats.Lifesteal += 0.125 + 0.025*Trimp.Equipment.Raincoat;
+				Trimp.CurrentStats.BleedMult += 0.2 + 0.1*Trimp.Equipment.Raincoat;
+			}
+			if ((Trimp.Equipment.PutridPouch > 0) && (Enemy.CurrentStats.PoisonedTime > 0))
+				Trimp.CurrentStats.AttackSpeed *= 0.9;
+			if (Trimp.Equipment.ChemistrySet > 0)
+			{
+				if (Enemy.CurrentStats.PoisonedTime > 0)
+					Trimp.CurrentStats.Defense += Trimp.Equipment.ChemistrySet;
+				else
+					Trimp.CurrentStats.PoisonChance += 50;
 			}
 		}
 
@@ -182,20 +195,23 @@ namespace SpireAssault
 		{
 			if (defender.CurrentStats.BleedingTime <= 0)
 			{
-				if (rand.NextDouble() * 100 < attacker.CurrentStats.BleedChance - defender.CurrentStats.BleedResist)
+				if (attacker.CurrentStats.CanBleed 
+					&& (rand.NextDouble() * 100 < attacker.CurrentStats.BleedChance - defender.CurrentStats.BleedResist))
 				{
 					defender.CurrentStats.BleedingTime = attacker.CurrentStats.BleedTimeMax;
 					defender.CurrentStats.BleedingMult = attacker.CurrentStats.BleedMult;
 				}
 			}
 
-			if (rand.NextDouble() * 100 < attacker.CurrentStats.ShockChance - defender.CurrentStats.ShockResist)
+			if (attacker.CurrentStats.CanShock 
+				&& (rand.NextDouble() * 100 < attacker.CurrentStats.ShockChance - defender.CurrentStats.ShockResist))
 			{
 				defender.CurrentStats.ShockedTime = attacker.CurrentStats.ShockTimeMax;
 				defender.CurrentStats.ShockedMult = attacker.CurrentStats.ShockMult;
 			}
 
-			if (rand.NextDouble() * 100 < attacker.CurrentStats.PoisonChance - defender.CurrentStats.PoisonResist)
+			if (attacker.CurrentStats.CanPoison 
+				&& (rand.NextDouble() * 100 < attacker.CurrentStats.PoisonChance - defender.CurrentStats.PoisonResist))
 			{
 				defender.CurrentStats.PoisonedTime = attacker.CurrentStats.PoisonTimeMax;
 				defender.CurrentStats.PoisonedStacks = Math.Min(defender.CurrentStats.PoisonedStacks+1, attacker.CurrentStats.PoisonMaxStacks);

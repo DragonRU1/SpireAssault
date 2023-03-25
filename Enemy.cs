@@ -30,6 +30,10 @@ namespace SpireAssault
 		public void CalcualteEnemyStats(Equipment eq)
 		{
 			BaseStats = new Stats();
+			// Enemy does not need specific items to enable debuffs
+			BaseStats.CanBleed = true;
+			BaseStats.CanShock = true;
+			BaseStats.CanPoison = true;
 
 			Dust = (1 + (Level-1)*5) * Math.Pow(1.19, Level-1);
 			BaseStats.HP = 50 * Math.Pow(1.205, Level);
@@ -47,7 +51,7 @@ namespace SpireAssault
 			BaseStats.BleedResist = Level;
 			BaseStats.ShockResist = Level;
 			BaseStats.PoisonResist = Level;
-			BaseStats.LifestealResist = Math.Max(Level-14, 0) * 3;
+			BaseStats.LifestealResist = Math.Max(Level-14, 0) * 0.03;
 
 			BaseStats.AttackSpeed = 5000 * Math.Pow(0.98, Math.Min(Level, 29));
 

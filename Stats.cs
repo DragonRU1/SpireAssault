@@ -39,6 +39,9 @@ namespace SpireAssault
 		public double BleedingMult;
 		public double ShockedMult;
 		public int PoisonedStacks;
+		public bool CanBleed;
+		public bool CanShock;
+		public bool CanPoison;
 
 		public Stats()
 		{
@@ -63,7 +66,9 @@ namespace SpireAssault
 			BleedingMult = 0;
 			ShockedMult = 0;
 			PoisonedStacks = 0;
-
+			CanBleed = false;
+			CanShock = false;
+			CanPoison = false;
 		}
 
 

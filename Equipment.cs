@@ -15,7 +15,11 @@ namespace SpireAssault
 		FistsOfGoo = 4,
 		BatteryStick = 5,
 		Pants = 6,
-		Raincoat = 7
+		Raincoat = 7,
+		PutridPouch = 8,
+		ChemistrySet = 9,
+		BadMedkit = 10,
+		ComfyBoots = 11
 	}
 
 
@@ -30,7 +34,11 @@ namespace SpireAssault
 		public int FistsOfGoo => Items[(int)EqNames.FistsOfGoo];
 		public int BatteryStick => Items[(int)EqNames.BatteryStick];
 		public int Pants => Items[(int)EqNames.Pants];
-		public int RainCoat => Items[(int)EqNames.Raincoat];
+		public int Raincoat => Items[(int)EqNames.Raincoat];
+		public int PutridPouch => Items[(int)EqNames.PutridPouch];
+		public int ChemistrySet => Items[(int)EqNames.ChemistrySet];
+		public int BadMedkit => Items[(int)EqNames.BadMedkit];
+		public int ComfyBoots => Items[(int)EqNames.ComfyBoots];
 
 		public Equipment(int[] items)
 		{
@@ -44,7 +52,7 @@ namespace SpireAssault
 
 		public Equipment(EquipmentDS equipmentDS)
 		{
-			Items = equipmentDS.Items.Select(x => x.Level).ToArray();
+			Items = equipmentDS.Items.Select(x => x.IsEquipped ? x.Level : 0).ToArray();
 		}
 
 	}
