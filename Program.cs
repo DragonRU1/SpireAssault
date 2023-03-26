@@ -1,3 +1,6 @@
+using log4net;
+using Microsoft.VisualBasic.Logging;
+
 namespace SpireAssault
 {
 	internal static class Program

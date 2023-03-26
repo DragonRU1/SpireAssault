@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,11 @@ namespace SpireAssault
 		public int FightTime { get; set; } // Calculated in 1000th of second
 		public Trimp Trimp { get; set; }
 		public Fighter Enemy { get; set; }
+
+#if DEBUG
+		public List<string> Log = new();
+#endif
+
 
 		double attackT, attackE;
 		int poisonTick;
@@ -36,10 +42,11 @@ namespace SpireAssault
 		public FightResult Simulate(out double dust)
 		{
 			dust = 0;
+#if DEBUG
+		Log.Clear();
+#endif
 			while (true)
 			{
-				FightTime += Tick;
-
 				RecalculateStats();
 				FightResult fr = FightResult.None;
 				if (attackT < Tick)
@@ -68,6 +75,7 @@ namespace SpireAssault
 					return fr;
 				}
 
+				FightTime += Tick;
 				attackT -= Tick;
 				attackE -= Tick;
 				poisonTick -= Tick;
@@ -96,14 +104,23 @@ namespace SpireAssault
 
 				double FullDamage = Math.Max(dmg - defender.CurrentStats.Defense, 0);
 				defender.CurrentStats.HP -= FullDamage;
+#if DEBUG
+				Log.Add($"{FightTime} - {(attacker.isTrimp ? "Trimp" : "Enemy")} attacked for {FullDamage:0.00}. " +
+					$"Trimp HP = {Trimp.CurrentStats.HP:0.00}. Enemy HP = {Enemy.CurrentStats.HP:0.00}.");
+#endif
 				if (defender.CurrentStats.HP < 0)
 					return EndFight(attacker, true);
 
 				if (attacker.CurrentStats.Lifesteal > 0)
 				{
-					attacker.CurrentStats.HP += FullDamage * Math.Max(attacker.CurrentStats.Lifesteal - defender.CurrentStats.LifestealResist, 0);
+					double ls = FullDamage * Math.Max(attacker.CurrentStats.Lifesteal - defender.CurrentStats.LifestealResist, 0);
+					attacker.CurrentStats.HP += ls;
 					if (attacker.CurrentStats.HP > attacker.CurrentStats.MaxHP)
 						attacker.CurrentStats.HP = attacker.CurrentStats.MaxHP;
+#if DEBUG
+					Log.Add($"{FightTime} - {(attacker.isTrimp ? "Trimp" : "Enemy")} lifestealed {ls:0.00}. " +
+					$"Trimp HP = {Trimp.CurrentStats.HP:0.00}. Enemy HP = {Enemy.CurrentStats.HP:0.00}.");
+#endif
 				}
 			}
 
@@ -117,12 +134,22 @@ namespace SpireAssault
 				attacker.CurrentStats.HP -= dmg;
 				if (attacker.CurrentStats.HP < 0)
 					return EndFight(attacker, false);
+#if DEBUG
+				Log.Add($"{FightTime} - {(attacker.isTrimp ? "Trimp" : "Enemy")} bleeded for {dmg:0.00}. " +
+					$"Trimp HP = {Trimp.CurrentStats.HP:0.00}. Enemy HP = {Enemy.CurrentStats.HP:0.00}.");
+#endif
+
 
 				if (defender.CurrentStats.Lifesteal > 0)
 				{
-					defender.CurrentStats.HP += dmg * (defender.CurrentStats.Lifesteal - attacker.CurrentStats.LifestealResist);
+					double b_rec = dmg * (defender.CurrentStats.Lifesteal - attacker.CurrentStats.LifestealResist);
+					defender.CurrentStats.HP += b_rec ;
 					if (defender.CurrentStats.HP > defender.CurrentStats.MaxHP)
 						defender.CurrentStats.HP = defender.CurrentStats.MaxHP;
+#if DEBUG
+					Log.Add($"{FightTime} - {(attacker.isTrimp ? "Enemy" : "Trimp")} recovered {b_rec:0.00} from bleed lifestealing. " +
+					$"Trimp HP = {Trimp.CurrentStats.HP:0.00}. Enemy HP = {Enemy.CurrentStats.HP:0.00}.");
+#endif
 				}
 			}
 			ModifyConditions(attacker, defender);
@@ -133,9 +160,14 @@ namespace SpireAssault
 		{
 			if (attacker.CurrentStats.PoisonedTime > 0)
 			{
-				attacker.CurrentStats.HP -= defender.CurrentStats.PoisonDamage
-					* attacker.CurrentStats.PoisonedStacks 
+				double pDam = defender.CurrentStats.PoisonDamage
+					* attacker.CurrentStats.PoisonedStacks
 					* (attacker.CurrentStats.ShockedTime > 0 ? 1+attacker.CurrentStats.ShockedMult : 1);
+				attacker.CurrentStats.HP -= pDam;
+#if DEBUG
+				Log.Add($"{FightTime} - {(attacker.isTrimp ? "Trimp" : "Enemy")} took {pDam:0.00} poison damage. " +
+					$"Trimp HP = {Trimp.CurrentStats.HP:0.00}. Enemy HP = {Enemy.CurrentStats.HP:0.00}.");
+#endif
 				if (attacker.CurrentStats.HP <= 0)
 				{
 					if (attacker.isTrimp)
@@ -200,14 +232,23 @@ namespace SpireAssault
 				{
 					defender.CurrentStats.BleedingTime = attacker.CurrentStats.BleedTimeMax;
 					defender.CurrentStats.BleedingMult = attacker.CurrentStats.BleedMult;
+#if DEBUG
+					Log.Add($"{FightTime} - {(attacker.isTrimp ? "Enemy" : "Trimp")} is bleeding. ");
+#endif
 				}
 			}
 
-			if (attacker.CurrentStats.CanShock 
-				&& (rand.NextDouble() * 100 < attacker.CurrentStats.ShockChance - defender.CurrentStats.ShockResist))
+			if (defender.CurrentStats.ShockedTime <= 0)
 			{
-				defender.CurrentStats.ShockedTime = attacker.CurrentStats.ShockTimeMax;
-				defender.CurrentStats.ShockedMult = attacker.CurrentStats.ShockMult;
+				if (attacker.CurrentStats.CanShock
+				&& (rand.NextDouble() * 100 < attacker.CurrentStats.ShockChance - defender.CurrentStats.ShockResist))
+				{
+					defender.CurrentStats.ShockedTime = attacker.CurrentStats.ShockTimeMax;
+					defender.CurrentStats.ShockedMult = attacker.CurrentStats.ShockMult;
+#if DEBUG
+					Log.Add($"{FightTime} - {(attacker.isTrimp ? "Enemy" : "Trimp")} is shocked. ");
+#endif
+				}
 			}
 
 			if (attacker.CurrentStats.CanPoison 
@@ -217,6 +258,9 @@ namespace SpireAssault
 					defender.CurrentStats.PoisonedStacks = 0;
 				defender.CurrentStats.PoisonedTime = attacker.CurrentStats.PoisonTimeMax;
 				defender.CurrentStats.PoisonedStacks = Math.Min(defender.CurrentStats.PoisonedStacks+1, attacker.CurrentStats.PoisonMaxStacks);
+#if DEBUG
+				Log.Add($"{FightTime} - {(attacker.isTrimp ? "Enemy" : "Trimp")} is poisoned. Stacks: {defender.CurrentStats.PoisonedStacks}. ");
+#endif
 			}
 
 
