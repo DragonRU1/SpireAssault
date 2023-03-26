@@ -9,12 +9,12 @@ namespace SpireAssault
 	internal class Simulation
 	{
 		public Trimp Trimp { get; set; }
-		public Fighter Enemy { get; set; }
+		public Enemy Enemy { get; set; }
 		public int Wins;
 		public int Losses;
 		public double Dust;
 		public long RunTime;
-		public Simulation(Trimp trimp, Fighter enemy) 
+		public Simulation(Trimp trimp, Enemy enemy) 
 		{ 
 			Wins = 0;
 			Losses = 0;

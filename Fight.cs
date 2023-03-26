@@ -1,5 +1,4 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +14,7 @@ namespace SpireAssault
 
 		public int FightTime { get; set; } // Calculated in 1000th of second
 		public Trimp Trimp { get; set; }
-		public Fighter Enemy { get; set; }
+		public Enemy Enemy { get; set; }
 
 #if DEBUG
 		public List<string> Log = new();
@@ -71,7 +70,8 @@ namespace SpireAssault
 				if (fr != FightResult.None)
 				{
 					if (fr == FightResult.Win)
-						dust = ((Enemy)Enemy).Dust;
+						dust = Enemy.Dust * (1 + (Trimp.Equipment.LifegivingGem > 0 ? 
+							0.2 + 0.1*Trimp.Equipment.LifegivingGem + Math.Max(0, Trimp.CurrentStats.Lifesteal - Enemy.CurrentStats.LifestealResist) : 0));
 					return fr;
 				}
 
@@ -200,18 +200,6 @@ namespace SpireAssault
 			if (Trimp.Equipment.BatteryStick > 0)
 				if (Enemy.CurrentStats.PoisonedTime > 0 || Enemy.CurrentStats.BleedingTime > 0)
 					Trimp.CurrentStats.ShockChance += 35;
-			if ((Trimp.Equipment.Raincoat > 0) && (Trimp.CurrentStats.BleedChance > Enemy.CurrentStats.BleedResist))
-			{
-				Trimp.CurrentStats.Defense += 4 + Trimp.Equipment.Raincoat * 2;
-				Trimp.CurrentStats.MaxHP += 20 + Trimp.Equipment.Raincoat * 20;
-
-				// if you have bleed chance on start, your current hp is also increased
-				if (FightTime == Tick)
-					Trimp.CurrentStats.HP = Trimp.CurrentStats.MaxHP;
-
-				Trimp.CurrentStats.Lifesteal += 0.125 + 0.025*Trimp.Equipment.Raincoat;
-				Trimp.CurrentStats.BleedMult += 0.2 + 0.1*Trimp.Equipment.Raincoat;
-			}
 			if ((Trimp.Equipment.PutridPouch > 0) && (Enemy.CurrentStats.PoisonedTime > 0))
 				Trimp.CurrentStats.AttackSpeed *= 0.9;
 			if (Trimp.Equipment.ChemistrySet > 0)
@@ -221,6 +209,24 @@ namespace SpireAssault
 				else
 					Trimp.CurrentStats.PoisonChance += 50;
 			}
+
+			// !!!! Those items are affected by bleed/shock/poison chances, and should be placed last
+			if ((Trimp.Equipment.Raincoat > 0) && (Trimp.CurrentStats.BleedChance > Enemy.CurrentStats.BleedResist))
+			{
+				Trimp.CurrentStats.Defense += 4 + Trimp.Equipment.Raincoat * 2;
+				Trimp.CurrentStats.MaxHP += 20 + Trimp.Equipment.Raincoat * 20;
+				Trimp.CurrentStats.Lifesteal += 0.125 + 0.025*Trimp.Equipment.Raincoat;
+				Trimp.CurrentStats.BleedMult += 0.2 + 0.1*Trimp.Equipment.Raincoat;
+			}
+			if ((Trimp.Equipment.Labcoat > 0) && (Trimp.CurrentStats.PoisonChance > Enemy.CurrentStats.PoisonResist))
+			{
+				Trimp.CurrentStats.MaxHP += 25 + Trimp.Equipment.Labcoat * 25;
+				Trimp.CurrentStats.AttackSpeed *= Math.Pow(0.99, Trimp.Equipment.Labcoat);
+				Trimp.CurrentStats.PoisonDamage += Trimp.Equipment.Labcoat;
+			}
+			// if you have bleed chance on start, your current hp is also increased
+			if (FightTime == 0)
+				Trimp.CurrentStats.HP = Trimp.CurrentStats.MaxHP;
 		}
 
 		void ModifyConditions(Fighter attacker, Fighter defender)

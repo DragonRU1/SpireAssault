@@ -19,7 +19,9 @@ namespace SpireAssault
 		PutridPouch = 8,
 		ChemistrySet = 9,
 		BadMedkit = 10,
-		ComfyBoots = 11
+		ComfyBoots = 11,
+		Labcoat = 12,
+		LifegivingGem = 13
 	}
 
 
@@ -39,6 +41,8 @@ namespace SpireAssault
 		public int ChemistrySet => Items[(int)EqNames.ChemistrySet];
 		public int BadMedkit => Items[(int)EqNames.BadMedkit];
 		public int ComfyBoots => Items[(int)EqNames.ComfyBoots];
+		public int Labcoat => Items[(int)EqNames.Labcoat];
+		public int LifegivingGem => Items[(int)EqNames.LifegivingGem];
 
 		public Equipment(int[] items)
 		{

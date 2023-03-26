@@ -85,7 +85,7 @@ namespace SpireAssault
 				"Stormbringer",
 				"Box_of_Spores",
 				"Nullifium_Armor",
-				"Handful_of_Mold",
+				"Myco_Mitts",
 				"Haunted_Harpoon"};
 
 			Items = new BindingList<EquipmentDSItem> {};

@@ -46,7 +46,8 @@ namespace SpireAssault
 
 		private void loadGame_Click(object sender, EventArgs e)
 		{
-			JToken? items;
+			JToken? items, level;
+			
 			if (string.IsNullOrEmpty(saveText.Text))
 				return;
 			try
@@ -55,6 +56,8 @@ namespace SpireAssault
 				JObject save = JObject.Parse(decodedString);
 				JToken? abData = save?["global"]?["autoBattleData"];
 				items = abData?["items"];
+				level = abData?["enemyLevel"];
+				eLevel.Value = int.Parse(level?.Value<string>() ?? "");
 			}
 			catch
 			{
