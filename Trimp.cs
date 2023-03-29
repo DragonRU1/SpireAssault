@@ -64,7 +64,6 @@ namespace SpireAssault
 			{
 				BaseStats.PoisonTimeMax = Math.Max(BaseStats.PoisonTimeMax, 19000 + Equipment.PutridPouch * 1000);
 				BaseStats.PoisonChance += 14 + Equipment.PutridPouch * 6;
-				BaseStats.Defense += 7 + Equipment.PutridPouch * 3;
 			}
 			if (Equipment.ChemistrySet > 0)
 			{
@@ -83,6 +82,42 @@ namespace SpireAssault
 				BaseStats.BleedResist += Equipment.ComfyBoots*5;
 				BaseStats.ShockResist += Equipment.ComfyBoots*5;
 				BaseStats.PoisonResist += Equipment.ComfyBoots*5;
+			}
+			if (Equipment.HungeringMold > 0)
+			{
+				BaseStats.PoisonTick *= 0.909 * Math.Pow(0.99, Equipment.HungeringMold);
+				BaseStats.PoisonHeal += 0.5 + Equipment.HungeringMold*0.5;
+			}
+			if (Equipment.Recycler > 0)
+			{
+				BaseStats.Lifesteal += 0.2 + 0.05*Equipment.Recycler;
+			}
+			if (Equipment.ShiningArmor > 0)
+			{
+				BaseStats.Defense += 14 + 6*Equipment.ShiningArmor;
+				BaseStats.HP += 200 + 100*Equipment.ShiningArmor;
+			}
+			if (Equipment.ShockAndAwl > 0)
+			{
+				BaseStats.ShockTimeMax = Math.Max(20000, BaseStats.ShockTimeMax);
+				BaseStats.ShockChance += 20 + 10 * Equipment.ShockAndAwl;
+				BaseStats.ShockMult += 0.4 + 0.1 * Equipment.ShockAndAwl;
+				BaseStats.Attack += 6 + 4 * Equipment.ShockAndAwl;
+			}
+			if (Equipment.TameSnimp > 0)
+			{
+				BaseStats.CanPoison = true;
+				BaseStats.PoisonChance += 30 + 10*Equipment.TameSnimp;
+				BaseStats.PoisonDamage += 5 + 2*Equipment.TameSnimp;
+			}
+			if (Equipment.WiredWristguards > 0)
+			{
+				BaseStats.Defense += 7 + 3*Equipment.WiredWristguards;
+				BaseStats.ShockChance += 25 + 15*Equipment.WiredWristguards;
+				BaseStats.ShockMult += 0.25 + 0.15*Equipment.WiredWristguards;
+				BaseStats.BleedResist += 50;
+				BaseStats.ShockResist += 50;
+				BaseStats.PoisonResist += 50;
 			}
 
 			// After all equipment

@@ -38,10 +38,14 @@ namespace SpireAssault
 			Trimp t = new(eq);
 			Enemy en = new(enemyLevel, eq);
 			Simulation s = new(t, en);
+#if DEBUG
+			s.ProcessFights(10000);
+#else
 			s.ProcessFights(100000);
+#endif
 			Result.Text = $"Wins = {s.Wins}, {Environment.NewLine}" +
 				$"Losses = {s.Losses}, {Environment.NewLine}" +
-				$"Dust per second = {s.Dust/s.RunTime * 1000}";
+				$"Dust per second = {s.Dust/s.RunTime * 1000:0.00}";
 		}
 
 		private void loadGame_Click(object sender, EventArgs e)
@@ -93,6 +97,11 @@ namespace SpireAssault
 		{
 			equipmentDS = new();
 			Equipment.DataSource = equipmentDS.Items;
+		}
+
+		private void saveText_Enter(object sender, EventArgs e)
+		{
+			saveText.Text = string.Empty;
 		}
 	}
 }

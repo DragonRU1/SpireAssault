@@ -12,6 +12,7 @@ namespace SpireAssault
 		public double MaxHP;
 		public double Attack;
 		public double AttackSpeed;
+		public double PoisonTick;
 		public double Defense;
 		public double BleedChance;
 		public double ShockChance;
@@ -20,6 +21,7 @@ namespace SpireAssault
 		public double ShockMult;
 		public double PoisonDamage;
 		public int PoisonMaxStacks;
+		public double PoisonHeal;
 
 		public double BleedTimeMax;
 		public double ShockTimeMax;
@@ -39,9 +41,11 @@ namespace SpireAssault
 		public double BleedingMult;
 		public double ShockedMult;
 		public int PoisonedStacks;
+		public double PoisonedLastTick;
 		public bool CanBleed;
 		public bool CanShock;
 		public bool CanPoison;
+		public double DamageTakenMult;
 
 		public Stats()
 		{
@@ -56,6 +60,9 @@ namespace SpireAssault
 			BleedTimeMax = 10000;
 			ShockTimeMax = 10000;
 			PoisonTimeMax = 10000;
+			PoisonTick = 1000;
+			PoisonHeal = 0;
+
 			BleedResist = 0;
 			ShockResist = 0;
 			PoisonResist = 0;
@@ -66,9 +73,11 @@ namespace SpireAssault
 			BleedingMult = 0;
 			ShockedMult = 0;
 			PoisonedStacks = 0;
+			PoisonedLastTick = 0;
 			CanBleed = false;
 			CanShock = false;
 			CanPoison = false;
+			DamageTakenMult = 1;
 		}
 
 

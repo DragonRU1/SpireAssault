@@ -41,7 +41,9 @@ namespace SpireAssault
 					Dust += dust;
 				}
 				else
+				{
 					Losses++;
+				}
 				RunTime += fight.FightTime;
 			}
 

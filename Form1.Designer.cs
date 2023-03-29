@@ -82,6 +82,7 @@
 			this.saveText.Size = new System.Drawing.Size(100, 43);
 			this.saveText.TabIndex = 4;
 			this.saveText.Text = "";
+			this.saveText.Enter += new System.EventHandler(this.saveText_Enter);
 			// 
 			// label1
 			// 

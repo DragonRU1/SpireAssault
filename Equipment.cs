@@ -21,7 +21,20 @@ namespace SpireAssault
 		BadMedkit = 10,
 		ComfyBoots = 11,
 		Labcoat = 12,
-		LifegivingGem = 13
+		LifegivingGem = 13,
+		MoodBracelet = 14,
+		HungeringMold = 15,
+		Recycler = 16,
+		ShiningArmor = 17,
+		ShockAndAwl = 18,
+		SpikedGloves = 19,
+		TameSnimp = 20,
+		LichWraps = 21,
+		WiredWristguards = 22,
+		Aegis = 23,
+		SwordAndBoard = 24,
+		BiliousBoots = 25,
+		BloodstainedGloves = 26
 	}
 
 
@@ -43,6 +56,19 @@ namespace SpireAssault
 		public int ComfyBoots => Items[(int)EqNames.ComfyBoots];
 		public int Labcoat => Items[(int)EqNames.Labcoat];
 		public int LifegivingGem => Items[(int)EqNames.LifegivingGem];
+		public int MoodBracelet => Items[(int)EqNames.MoodBracelet];
+		public int HungeringMold => Items[(int)EqNames.HungeringMold];
+		public int Recycler => Items[(int)EqNames.Recycler];
+		public int ShiningArmor => Items[(int)EqNames.ShiningArmor];
+		public int ShockAndAwl => Items[(int)EqNames.ShockAndAwl];
+		public int SpikedGloves => Items[(int)EqNames.SpikedGloves];
+		public int TameSnimp => Items[(int)EqNames.TameSnimp];
+		public int LichWraps => Items[(int)EqNames.LichWraps];
+		public int WiredWristguards => Items[(int)EqNames.WiredWristguards];
+		public int Aegis => Items[(int)EqNames.Aegis];
+		public int SwordAndBoard => Items[(int)EqNames.SwordAndBoard];
+		public int BiliousBoots => Items[(int)EqNames.BiliousBoots];
+		public int BloodstainedGloves => Items[(int)EqNames.BloodstainedGloves];
 
 		public Equipment(int[] items)
 		{
