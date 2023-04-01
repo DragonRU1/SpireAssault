@@ -38,7 +38,7 @@ namespace SpireAssault
 			Trimp t = new(eq);
 			Enemy en = new(enemyLevel, eq);
 			Simulation s = new(t, en);
-#if DEBUG
+#if LOGGING
 			s.ProcessFights(10000);
 #else
 			s.ProcessFights(100000);
